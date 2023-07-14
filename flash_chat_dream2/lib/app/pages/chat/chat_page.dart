@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat_dream2/app/models/chat_model.dart';
 import 'package:flash_chat_dream2/app/models/user_model.dart';
+import 'package:flash_chat_dream2/app/pages/chat/widgets/future/chat_future.dart';
 import 'package:flash_chat_dream2/app/pages/chat/widgets/messages/send_message.dart';
 import 'package:flutter/material.dart';
 
@@ -9,9 +10,11 @@ class ChatPage extends StatefulWidget {
   const ChatPage({
     Key? key,
     this.userModel,
+    // this.uid,
   }) : super(key: key);
 
   final UserModel? userModel;
+  // final String? uid;
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -41,6 +44,10 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: [
           Expanded(child: SizedBox()),
+          GetMessagesFuture(
+              // documentId: widget.uid,
+              ),
+          // Expanded(child: SizedBox()),
           Container(
             decoration: const BoxDecoration(
               border: Border(

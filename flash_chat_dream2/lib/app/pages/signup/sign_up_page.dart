@@ -31,16 +31,16 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _isLoading = false;
   final _auth = FirebaseAuth.instance;
   TextEditingController confirmControllerPassword = TextEditingController();
-  String id = '12345436475dfdgd';
+  final uid = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
 
   final users = FirebaseFirestore.instance.collection('users');
-  final _uid = Uuid().v4();
+  // final _uid = Uuid().v4();
   Future<void> addUser() {
     final userModel = UserModel(
       email: emailController.text,
       name: nameController.text,
-      id: _uid,
+      id: uid.currentUser!.uid,
     );
     return users
         .add(
@@ -52,6 +52,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 MaterialPageRoute(
                   builder: (context) => ChatPage(
                     userModel: userModel,
+                    // uid: uid.currentUser!.uid,
                   ),
                 ),
               ),
@@ -64,7 +65,7 @@ class _SignUpPageState extends State<SignUpPage> {
       _isLoading = true;
     });
     try {
-      await FirebaseAuth.instance
+      final credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
             email: emailController.text,
             password: passwordController.text,

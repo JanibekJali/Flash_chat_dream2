@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat_dream2/app/models/user_model.dart';
 import 'package:flash_chat_dream2/app/pages/chat/chat_page.dart';
@@ -28,26 +29,29 @@ class _SignInPageState extends State<SignInPage> {
   bool _isVisible = false;
 
   Future<void> signIn() async {
-    final userModel = UserModel();
     setState(() {
       _isLoading = true;
     });
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text)
-          .then((value) => {
-                FocusScope.of(context).requestFocus(FocusNode()),
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatPage(
-                      userModel: userModel,
-                    ),
-                  ),
-                ),
-              });
-      // log('creadetitial ==> ${credential}');
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+      final _response = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(credential.user!.uid)
+          .get();
+      final _userModel = UserModel.fromJson(_response.data()!);
+
+      FocusScope.of(context).requestFocus(FocusNode());
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatPage(
+            userModel: _userModel,
+          ),
+        ),
+      );
+
+      log('creadetitial ==> ${credential}');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         log('No user found for that email. ');
