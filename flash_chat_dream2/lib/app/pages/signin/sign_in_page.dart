@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat_dream2/app/models/chat_model.dart';
 import 'package:flash_chat_dream2/app/models/user_model.dart';
 import 'package:flash_chat_dream2/app/pages/chat/chat_page.dart';
 import 'package:flash_chat_dream2/app/widgets/alerts/show_alert_dialog.dart';
@@ -27,6 +28,7 @@ class _SignInPageState extends State<SignInPage> {
 
   bool _isLoading = false;
   bool _isVisible = false;
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   Future<void> signIn() async {
     setState(() {
@@ -35,19 +37,19 @@ class _SignInPageState extends State<SignInPage> {
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
-      final _response = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(credential.user!.uid)
-          .get();
-      final _userModel = UserModel.fromJson(_response.data()!);
+      // await _getUser(credential.user!.uid);e
+      final _response = await users.doc(credential.user!.uid).get();
+      log('otvet ==> ${_response}');
 
-      FocusScope.of(context).requestFocus(FocusNode());
+      // final _userModel = UserModel.fromJson(_response );
+
+      // FocusScope.of(context).requestFocus(FocusNode());
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => ChatPage(
-            userModel: _userModel,
-          ),
+              // userModel: _userModel,
+              ),
         ),
       );
 

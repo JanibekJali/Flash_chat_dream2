@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flash_chat_dream2/app/pages/register/register_page.dart';
 import 'package:flutter/material.dart';
 
-import 'app/pages/chat/chat_page.dart';
 import 'app/pages/signin/sign_in_page.dart';
 import 'app/pages/signup/sign_up_page.dart';
 import 'firebase_options.dart';

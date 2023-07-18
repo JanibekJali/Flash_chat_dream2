@@ -4,6 +4,7 @@ import 'package:flash_chat_dream2/app/models/chat_model.dart';
 import 'package:flash_chat_dream2/app/models/user_model.dart';
 import 'package:flash_chat_dream2/app/pages/chat/widgets/future/chat_future.dart';
 import 'package:flash_chat_dream2/app/pages/chat/widgets/messages/send_message.dart';
+import 'package:flash_chat_dream2/app/pages/chat/widgets/stream/stream_widget.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
@@ -24,6 +25,10 @@ class _ChatPageState extends State<ChatPage> {
   final smsController = TextEditingController();
   final nameController = TextEditingController();
   final chats = FirebaseFirestore.instance.collection('chats');
+  final Stream<QuerySnapshot> getStreamChat = FirebaseFirestore.instance
+      .collection('chats')
+      .orderBy('createdAt', descending: false)
+      .snapshots();
   bool isMe = false;
 
   Future<void> addChat(String sms) {
@@ -43,11 +48,7 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(title: Text('Welcome to Chat Page')),
       body: Column(
         children: [
-          Expanded(child: SizedBox()),
-          GetMessagesFuture(
-              // documentId: widget.uid,
-              ),
-          // Expanded(child: SizedBox()),
+          StreamWidget(stream: getStreamChat),
           Container(
             decoration: const BoxDecoration(
               border: Border(
@@ -75,10 +76,10 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 TextButton(
                   onPressed: () async {
-                    // _textEditingController.clear();
                     FocusScope.of(context).unfocus();
 
                     await addChat(smsController.text);
+                    smsController.clear();
                   },
                   child: const Text(
                     'Send',
