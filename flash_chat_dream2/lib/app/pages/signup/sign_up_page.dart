@@ -35,12 +35,12 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
 
   final users = FirebaseFirestore.instance.collection('users');
-  // final _uid = Uuid().v4();
-  Future<void> addUser() {
+
+  Future<void> addUser(String uid) {
     final userModel = UserModel(
       email: emailController.text,
       name: nameController.text,
-      id: uid.currentUser!.uid,
+      id: uid,
     );
     return users
         .add(
@@ -65,19 +65,22 @@ class _SignUpPageState extends State<SignUpPage> {
       _isLoading = true;
     });
     try {
-      final credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-            email: emailController.text,
-            password: passwordController.text,
-          )
-          .then((value) => {
-                addUser(),
-                FocusScope.of(context).requestFocus(FocusNode()),
-                nameController.clear(),
-                emailController.clear(),
-                passwordController.clear(),
-                confirmControllerPassword.clear(),
-              });
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      // .then((value) => {
+      //       addUser(value.user!.uid ),
+      //       FocusScope.of(context).requestFocus(FocusNode()),
+      //       nameController.clear(),
+      //       emailController.clear(),
+      //       passwordController.clear(),
+      //       confirmControllerPassword.clear(),
+      //     });
+      addUser(credential.user!.uid);
+      log('');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         log('The password provided is too weak.');

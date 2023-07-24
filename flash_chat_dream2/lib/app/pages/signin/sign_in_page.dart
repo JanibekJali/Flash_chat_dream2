@@ -27,6 +27,7 @@ class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
+  String name = 'jack';
   bool _isVisible = false;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
@@ -37,11 +38,12 @@ class _SignInPageState extends State<SignInPage> {
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
-      // await _getUser(credential.user!.uid);e
-      final _response = await users.doc(credential.user!.uid).get();
-      log('otvet ==> ${_response}');
+      // await _getUser(credential.user!.uid);
+      final _response = await users.doc(credential.user!.uid).get;
+      log('response ==> ${_response}');
 
-      // final _userModel = UserModel.fromJson(_response );
+      // final _userModel = UserModel.fromJson( );
+      log('response ===>> $_response');
 
       // FocusScope.of(context).requestFocus(FocusNode());
       Navigator.push(
